@@ -8,6 +8,7 @@ export default function MaritimeMechanicalApp() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
   const [page, setPage] = useState('home');
+  const [menuOpen, setMenuOpen] = useState(false); // Mobile menu state
   const [selectedService, setSelectedService] = useState<any>(null);
   const [selectedMission, setSelectedMission] = useState<any>(null);
   const [responseTime, setResponseTime] = useState('2.4');
@@ -23,6 +24,7 @@ export default function MaritimeMechanicalApp() {
     setPage(pageName);
     setSelectedService(null);
     setSelectedMission(null);
+    setMenuOpen(false); // Close mobile menu on navigate
     window.scrollTo(0, 0);
   };
 
@@ -126,26 +128,47 @@ export default function MaritimeMechanicalApp() {
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-blue-500/30 overflow-x-hidden">
       
-      <nav className="flex justify-between items-center px-8 py-5 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50">
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4 cursor-pointer" onClick={() => navigateTo('home')}>
-          <img src="/reallogo.png" alt="Logo" className="w-12 h-auto" />
-          <div className="hidden md:block">
-            <h1 className="font-black text-lg tracking-tighter uppercase">MARITIME MECHANICAL</h1>
-            <div className="flex items-center gap-2">
+      {/* NAVIGATION BAR */}
+      <nav className="flex justify-between items-center px-6 md:px-8 py-5 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-[60]">
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 cursor-pointer z-[70]" onClick={() => navigateTo('home')}>
+          <img src="/reallogo.png" alt="Logo" className="w-10 md:w-12 h-auto" />
+          <div>
+            <h1 className="font-black text-sm md:text-lg tracking-tighter uppercase leading-none">MARITIME MECHANICAL</h1>
+            <div className="flex items-center gap-2 mt-1">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
               </span>
-              <span className="text-[10px] text-green-500 font-mono uppercase tracking-widest leading-none">Response Time: {responseTime} HRS</span>
+              <span className="text-[10px] text-green-500 font-mono uppercase tracking-widest leading-none">{responseTime} HRS RESPONSE</span>
             </div>
           </div>
         </motion.div>
         
-        <div className="flex gap-8 text-xs font-bold tracking-widest">
+        {/* HAMBURGER ICON (Mobile Only) */}
+        <div className="md:hidden z-[70] cursor-pointer p-2" onClick={() => setMenuOpen(!menuOpen)}>
+          <div className="space-y-1.5">
+            <motion.span animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 8 : 0 }} className="block w-6 h-0.5 bg-white"></motion.span>
+            <motion.span animate={{ opacity: menuOpen ? 0 : 1 }} className="block w-6 h-0.5 bg-white"></motion.span>
+            <motion.span animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -8 : 0 }} className="block w-6 h-0.5 bg-white"></motion.span>
+          </div>
+        </div>
+
+        {/* NAV LINKS (Desktop & Mobile) */}
+        <div className={`
+          ${menuOpen ? 'flex opacity-100 translate-y-0' : 'hidden md:flex opacity-0 md:opacity-100 -translate-y-10 md:translate-y-0'}
+          absolute md:relative top-0 left-0 w-full md:w-auto h-screen md:h-auto
+          flex-col md:flex-row items-center justify-center md:justify-end
+          bg-slate-950 md:bg-transparent transition-all duration-300 ease-in-out
+          gap-10 md:gap-8 text-xs font-bold tracking-[0.2em] z-[60]
+        `}>
           {['Home', 'About', 'Founder', 'Services', 'Contact', 'Quote'].map((p) => (
-            <button key={p} onClick={() => navigateTo(p.toLowerCase())} className={`hover:text-blue-400 transition relative ${page === p.toLowerCase() ? 'text-blue-400' : 'text-white/50'}`}>
+            <button 
+              key={p} 
+              onClick={() => navigateTo(p.toLowerCase())} 
+              className={`hover:text-blue-400 transition relative text-lg md:text-xs uppercase ${page === p.toLowerCase() ? 'text-blue-400' : 'text-white/50'}`}
+            >
               {p === 'Quote' ? 'Get a Quote' : p}
-              {page === p.toLowerCase() && <motion.div layoutId="navline" className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-400" />}
+              {page === p.toLowerCase() && <motion.div layoutId="navline" className="absolute -bottom-2 left-0 right-0 h-0.5 bg-blue-400 hidden md:block" />}
             </button>
           ))}
         </div>
@@ -157,8 +180,8 @@ export default function MaritimeMechanicalApp() {
           {selectedMission ? (
             <motion.div key="mission-detail" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="px-8 py-12 max-w-6xl mx-auto text-left">
               <button onClick={() => setSelectedMission(null)} className="mb-8 text-blue-400 font-bold text-xs uppercase tracking-widest">← Back to Projects</button>
-              <div className="relative border border-blue-500/30 bg-slate-900/50 backdrop-blur-xl p-12">
-                <h1 className="text-5xl font-black uppercase mb-12">{selectedMission.title}</h1>
+              <div className="relative border border-blue-500/30 bg-slate-900/50 backdrop-blur-xl p-8 md:p-12">
+                <h1 className="text-3xl md:text-5xl font-black uppercase mb-12">{selectedMission.title}</h1>
                 <div className="grid md:grid-cols-2 gap-12">
                   <div className="space-y-8 text-white/80 text-xl font-light">
                     <section><h3 className="text-blue-500 font-bold text-xs uppercase mb-2">The Problem</h3><p>{selectedMission.challenge}</p></section>
@@ -177,10 +200,10 @@ export default function MaritimeMechanicalApp() {
                <button onClick={() => setSelectedService(null)} className="mb-8 text-blue-400 font-bold text-xs uppercase">← Back to Services</button>
                <div className="grid md:grid-cols-12 gap-12">
                   <div className="md:col-span-7">
-                    <img src={selectedService.img} className="w-full h-[450px] object-cover mb-8 border border-white/10" alt="Service" />
+                    <img src={selectedService.img} className="w-full h-[300px] md:h-[450px] object-cover mb-8 border border-white/10" alt="Service" />
                     <h1 className="text-4xl md:text-6xl font-black uppercase mb-8">{selectedService.name}</h1>
-                    <p className="text-2xl font-light text-white/60 mb-10 leading-relaxed">{selectedService.longDesc}</p>
-                    <div className="grid grid-cols-2 gap-4">
+                    <p className="text-xl md:text-2xl font-light text-white/60 mb-10 leading-relaxed">{selectedService.longDesc}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {selectedService.features.map((f: string) => (
                         <div key={f} className="p-4 border border-white/5 bg-white/5 text-xs font-bold uppercase tracking-widest">{f}</div>
                       ))}
@@ -210,8 +233,8 @@ export default function MaritimeMechanicalApp() {
                     </video>
                     <div className="relative z-10 max-w-5xl">
                       <h1 className="text-5xl md:text-[clamp(3rem,10vw,8rem)] font-black tracking-tighter uppercase leading-[0.85] mb-8">Ship Repair <br /><span className="text-blue-500">Anywhere</span></h1>
-                      <p className="text-lg md:text-2xl text-white/60 mb-12 font-light uppercase tracking-widest">Global Support // Since 2014</p>
-                      <div className="flex gap-4 justify-center">
+                      <p className="text-sm md:text-2xl text-white/60 mb-12 font-light uppercase tracking-widest">Global Support // Since 2014</p>
+                      <div className="flex flex-col md:flex-row gap-4 justify-center">
                         <button onClick={() => navigateTo('services')} className="bg-blue-600 px-12 py-5 font-black uppercase text-xs tracking-widest">Our Services</button>
                         <button onClick={() => navigateTo('quote')} className="border border-white/20 px-12 py-5 font-black uppercase text-xs tracking-widest hover:bg-white/5 transition-all">Get a Quote</button>
                       </div>
@@ -221,37 +244,25 @@ export default function MaritimeMechanicalApp() {
                   <section className="bg-white py-24 px-8 border-y border-white/5">
                     <div className="max-w-6xl mx-auto text-center mb-16">
                       <h4 className="text-blue-600 font-bold text-[10px] uppercase tracking-[0.3em] mb-2">Network</h4>
-                      <h2 className="text-4xl font-black text-slate-950 uppercase tracking-tighter">Our Trusted Partners</h2>
+                      <h2 className="text-3xl md:text-4xl font-black text-slate-950 uppercase tracking-tighter">Our Trusted Partners</h2>
                     </div>
-                    <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-around gap-20 grayscale hover:grayscale-0 transition-all duration-700">
-                      <img 
-                        src="/partner1.png" 
-                        alt="Partner 1" 
-                        className="h-16 md:h-24 w-auto object-contain hover:scale-110 transition-transform duration-300" 
-                      />
-                      <img 
-                        src="/partner2.png" 
-                        alt="Partner 2" 
-                        className="h-16 md:h-24 w-auto object-contain hover:scale-110 transition-transform duration-300" 
-                      />
-                      <img 
-                        src="/partner3.png" 
-                        alt="Partner 3" 
-                        className="h-16 md:h-24 w-auto object-contain hover:scale-110 transition-transform duration-300" 
-                      />
+                    <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-around gap-12 md:gap-20 grayscale hover:grayscale-0 transition-all duration-700">
+                      <img src="/partner1.png" alt="Partner 1" className="h-12 md:h-24 w-auto object-contain" />
+                      <img src="/partner2.png" alt="Partner 2" className="h-12 md:h-24 w-auto object-contain" />
+                      <img src="/partner3.png" alt="Partner 3" className="h-12 md:h-24 w-auto object-contain" />
                     </div>
                   </section>
 
                   <section className="px-8 py-24 max-w-7xl mx-auto text-left">
-                    <h2 className="text-4xl font-black italic uppercase mb-12 border-l-4 border-blue-600 pl-6">Recent Work</h2>
+                    <h2 className="text-3xl md:text-4xl font-black italic uppercase mb-12 border-l-4 border-blue-600 pl-6">Recent Work</h2>
                     <div className="grid md:grid-cols-2 gap-8">
                       {missionLogs.map((log) => (
-                        <div key={log.id} onClick={() => setSelectedMission(log)} className="group cursor-pointer relative h-[450px] overflow-hidden border border-white/5 bg-slate-900">
+                        <div key={log.id} onClick={() => setSelectedMission(log)} className="group cursor-pointer relative h-[400px] md:h-[450px] overflow-hidden border border-white/5 bg-slate-900">
                           <img src={log.img} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt={log.title} />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
                           <div className="absolute bottom-8 left-8">
                             <span className="text-blue-500 font-bold text-[10px] mb-2 block tracking-[0.3em] uppercase">{log.id}</span>
-                            <h3 className="text-4xl font-black uppercase tracking-tighter mb-4">{log.title}</h3>
+                            <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter mb-4">{log.title}</h3>
                             <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">View Project Details →</span>
                           </div>
                         </div>
@@ -262,11 +273,11 @@ export default function MaritimeMechanicalApp() {
               )}
 
               {page === 'about' && (
-                <motion.div key="about" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-32 max-w-7xl mx-auto text-left">
-                  <div className="grid md:grid-cols-2 gap-20 items-center mb-32">
+                <motion.div key="about" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-20 md:py-32 max-w-7xl mx-auto text-left">
+                  <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center mb-32">
                     <div>
-                      <h1 className="text-6xl font-black uppercase mb-12">About Us</h1>
-                      <p className="text-2xl text-white/70 font-light mb-8 leading-relaxed">Dedicated ship repair agency focused on quality and speed.</p>
+                      <h1 className="text-5xl md:text-6xl font-black uppercase mb-12">About Us</h1>
+                      <p className="text-xl md:text-2xl text-white/70 font-light mb-8 leading-relaxed">Dedicated ship repair agency focused on quality and speed.</p>
                       <p className="text-lg text-white/40 leading-relaxed">We understand that time in port is expensive. Our teams are designed to be mobile, meeting your vessel wherever it is needed.</p>
                     </div>
                     <div className="border border-white/10 p-2"><img src="supervisors.webp" alt="Team" className="opacity-80" /></div>
@@ -289,33 +300,33 @@ export default function MaritimeMechanicalApp() {
               )}
 
               {page === 'founder' && (
-  <motion.div key="founder" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-32 max-w-6xl mx-auto grid md:grid-cols-2 gap-20 items-center text-left">
-    <div className="flex justify-center">
-      <div className="w-full max-w-sm aspect-square border border-white/10 rounded-full overflow-hidden p-1 bg-slate-900/50">
-        <img 
-          src="CEO.png" 
-          alt="Thomas Giovanni - Founder and CEO" 
-          className="w-full h-full object-cover object-top rounded-full grayscale hover:grayscale-0 transition-all duration-500" 
-        />
-      </div>
-    </div>
-    <div>
-      <h4 className="text-blue-500 font-bold text-xs tracking-widest mb-4 uppercase">Our Leadership</h4>
-      <h1 className="text-7xl font-black uppercase mb-8 leading-tight">Thomas <br /> Giovanni</h1>
-      <p className="text-2xl font-light italic border-l-4 border-blue-600 pl-8 mb-2 text-white/70">"Reliable service is the foundation of our industry."</p>
-      <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-500 pl-9">CEO & Founder</p>
-    </div>
-  </motion.div>
-)}
+                <motion.div key="founder" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-20 md:py-32 max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-20 items-center text-left">
+                  <div className="flex justify-center">
+                    <div className="w-full max-w-[280px] md:max-w-sm aspect-square border border-white/10 rounded-full overflow-hidden p-1 bg-slate-900/50">
+                      <img 
+                        src="CEO.png" 
+                        alt="Thomas Giovanni" 
+                        className="w-full h-full object-cover object-top rounded-full grayscale" 
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-blue-500 font-bold text-xs tracking-widest mb-4 uppercase">Our Leadership</h4>
+                    <h1 className="text-5xl md:text-7xl font-black uppercase mb-8 leading-tight">Thomas <br /> Giovanni</h1>
+                    <p className="text-xl md:text-2xl font-light italic border-l-4 border-blue-600 pl-8 mb-2 text-white/70">"Reliable service is the foundation of our industry."</p>
+                    <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-500 pl-9">CEO & Founder</p>
+                  </div>
+                </motion.div>
+              )}
 
               {page === 'services' && (
-                <motion.div key="services" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-32 max-w-7xl mx-auto text-left">
-                  <h1 className="text-6xl font-black uppercase mb-20">What We Do</h1>
+                <motion.div key="services" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-20 md:py-32 max-w-7xl mx-auto text-left">
+                  <h1 className="text-5xl md:text-6xl font-black uppercase mb-20">What We Do</h1>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-1 bg-white/5 border border-white/5">
                     {serviceData.map((s) => (
-                      <div key={s.name} onClick={() => setSelectedService(s)} className="group relative bg-slate-950 p-12 cursor-pointer transition-all duration-500 overflow-hidden">
-                        <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
-                        <h3 className="text-3xl font-black uppercase mb-4 text-blue-500 group-hover:text-white">{s.name}</h3>
+                      <div key={s.name} onClick={() => setSelectedService(s)} className="group relative bg-slate-950 p-10 md:p-12 cursor-pointer transition-all duration-500 overflow-hidden">
+                        <div className="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-500 -z-10" />
+                        <h3 className="text-2xl md:text-3xl font-black uppercase mb-4 text-blue-500 group-hover:text-white">{s.name}</h3>
                         <p className="text-sm text-white/40 group-hover:text-white/80">{s.desc}</p>
                       </div>
                     ))}
@@ -324,18 +335,18 @@ export default function MaritimeMechanicalApp() {
               )}
 
               {page === 'contact' && (
-                <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-32 max-w-6xl mx-auto grid md:grid-cols-2 gap-20 text-left">
+                <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-20 md:py-32 max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-20 text-left">
                   <div>
-                    <h1 className="text-6xl font-black uppercase mb-12">Contact Us</h1>
+                    <h1 className="text-5xl md:text-6xl font-black uppercase mb-12">Contact Us</h1>
                     <div className="space-y-12">
-                        <div><h4 className="text-blue-500 font-bold text-xs mb-2 uppercase tracking-widest">Phone</h4><p className="text-3xl font-black">+1 (734) 584-4717</p></div>
-                        <div><h4 className="text-blue-500 font-bold text-xs mb-2 uppercase tracking-widest">Email</h4><p className="text-3xl font-black">ops@maritimemechanical.com</p></div>
+                        <div><h4 className="text-blue-500 font-bold text-xs mb-2 uppercase tracking-widest">Phone</h4><p className="text-2xl md:text-3xl font-black">+1 (734) 584-4717</p></div>
+                        <div><h4 className="text-blue-500 font-bold text-xs mb-2 uppercase tracking-widest">Email</h4><p className="text-2xl md:text-3xl font-black">ops@maritimemechanical.com</p></div>
                     </div>
                   </div>
                   <form onSubmit={handleFormSubmit} className="space-y-4">
-                    <input name="Name" placeholder="YOUR NAME" className="w-full bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500 transition-colors" required />
-                    <input name="Email" placeholder="YOUR EMAIL" type="email" className="w-full bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500 transition-colors" required />
-                    <textarea name="message" placeholder="HOW CAN WE HELP?" rows={6} className="w-full bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500 transition-colors" required />
+                    <input name="Name" placeholder="YOUR NAME" className="w-full bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500" required />
+                    <input name="Email" placeholder="YOUR EMAIL" type="email" className="w-full bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500" required />
+                    <textarea name="message" placeholder="HOW CAN WE HELP?" rows={6} className="w-full bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500" required />
                     <button type="submit" className="w-full py-6 font-black uppercase tracking-widest bg-blue-600 hover:bg-blue-500 transition-all flex items-center justify-center gap-2">
                       {isSubmitting ? <span className="animate-pulse">Sending...</span> : isSent ? "Message Sent" : "Send Request"}
                     </button>
@@ -344,19 +355,19 @@ export default function MaritimeMechanicalApp() {
               )}
 
               {page === 'quote' && (
-                <motion.div key="quote" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-32 max-w-6xl mx-auto text-left">
-                  <h1 className="text-6xl font-black uppercase mb-12">Get a Quote</h1>
+                <motion.div key="quote" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-8 py-20 md:py-32 max-w-6xl mx-auto text-left">
+                  <h1 className="text-5xl md:text-6xl font-black uppercase mb-12">Get a Quote</h1>
                   <form onSubmit={handleFormSubmit} className="grid grid-cols-2 gap-4">
-                    <input name="Name" placeholder="CONTACT NAME" className="col-span-2 md:col-span-1 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500" required />
-                    <input name="Email" placeholder="EMAIL ADDRESS" type="email" className="col-span-2 md:col-span-1 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500" required />
-                    <input name="Company" placeholder="COMPANY NAME" className="col-span-2 md:col-span-1 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500" required />
-                    <input name="vessel_type" placeholder="VESSEL TYPE" className="col-span-2 md:col-span-1 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500" required />
-                    <select name="service_type" className="col-span-2 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500 appearance-none uppercase" required>
+                    <input name="Name" placeholder="CONTACT NAME" className="col-span-2 md:col-span-1 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none" required />
+                    <input name="Email" placeholder="EMAIL ADDRESS" type="email" className="col-span-2 md:col-span-1 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none" required />
+                    <input name="Company" placeholder="COMPANY NAME" className="col-span-2 md:col-span-1 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none" required />
+                    <input name="vessel_type" placeholder="VESSEL TYPE" className="col-span-2 md:col-span-1 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none" required />
+                    <select name="service_type" className="col-span-2 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none appearance-none uppercase" required>
                       <option value="">Select Service Required</option>
                       {serviceData.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
                       <option value="Other">Other / Emergency</option>
                     </select>
-                    <textarea name="message" placeholder="DESCRIBE THE ISSUE IN DETAIL" rows={6} className="col-span-2 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none focus:border-blue-500" required />
+                    <textarea name="message" placeholder="DESCRIBE THE ISSUE IN DETAIL" rows={6} className="col-span-2 bg-slate-900 border border-white/10 p-5 font-bold text-xs outline-none" required />
                     <button type="submit" className="col-span-2 py-6 font-black uppercase tracking-widest bg-blue-600 hover:bg-blue-500 transition-all">
                       {isSubmitting ? "Processing..." : isSent ? "Request Sent" : "Submit Quote Request"}
                     </button>
